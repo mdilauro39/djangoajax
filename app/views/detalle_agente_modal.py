@@ -1,5 +1,6 @@
 from ..models import Agente
 from django.shortcuts import get_object_or_404
+from django.shortcuts import render
 
 # Nueva vista para el modal
 def detalle_agente_modal(request, agente_id):
