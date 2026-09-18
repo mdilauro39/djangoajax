@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real Estate Agents - Buscador</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- HTMX -->
+    <script src="https://cdn.jsdelivr.net/npm/htmx.org@2.0.10/dist/htmx.min.js" integrity="sha384-H5SrcfygHmAuTDZphMHqBJLc3FhssKjG7w/CeCpFReSfwBWDTKpkzPP8c+cLsK+V" crossorigin="anonymous"></script>
+    
+    <style>
+              body { background-color: #f8f9fa; font-family: 'Segoe UI', system-ui, -apple-system, sans-serif; }
+        .navbar-custom { background-color: #0f172a; }
+        .card-agent { border: 1px solid #e2e8f0; transition: all 0.25s ease; }
+        .card-agent:hover { transform: translateY(-4px); box-shadow: 0 12px 20px rgba(0,0,0,0.08); border-color: #cbd5e1; }
+        .avatar-container { width: 72px; height: 72px; background-color: #f1f5f9; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        
+        /* 💡 Efecto Shimmer / Esqueleto para la carga reactiva */
+        .skeleton-card { background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%); background-size: 200% 100%; animation: loading-shimmer 1.5s infinite; }
+        @keyframes loading-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+        /* Ocultar/Mostrar elementos en carga con HTMX */
+        .placeholder-container { display: none; }
+        .htmx-request .placeholder-container { display: block; }
+        .htmx-request .resultados-dinamicos { display: none; }
+    </style>
+</head>
+<body>
+
+    <!-- 🌐 Barra de Navegación -->
+    <nav class="navbar navbar-expand-lg navbar-dark navbar-custom shadow-sm py-3">
+        <div class="container">
+            <a class="navbar-brand fw-bold d-flex align-items-center" href="#">
+                <i class="bi bi-building-fill me-2 fs-4 text-info"></i> REAL ESTATE AGENTS
+            </a>
+            <div class="collapse navbar-collapse justify-content-end">
+                <ul class="navbar-nav align-items-center gap-3">
+                    <li class="nav-item"><a class="nav-link text-white-50" href="#">Inicio</a></li>
+                    <li class="nav-item"><a class="nav-link active fw-semibold" href="#">Agentes</a></li>
+                    <li class="nav-item"><a class="nav-link text-white-50" href="#">Soporte</a></li>
+                    <li class="nav-item"><a class="nav-link text-white fs-5" href="#"><i class="bi bi-person-circle"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 🔍 Contenedor Principal -->
+    <div class="container my-5">
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb text-muted small">
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Home</a></li>
+                <li class="breadcrumb-item"><a href="#" class="text-decoration-none text-muted">Agentes</a></li>
+                <li class="breadcrumb-item active text-dark fw-medium" aria-current="page">Buscador</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <!-- 🛠️ Barra Lateral: Filtros -->
+            <div class="col-lg-4 col-md-5">
+                <div class="card border-0 shadow-sm p-4 bg-white rounded-3">
+                    <h5 class="fw-bold mb-4 text-dark">
+                        <i class="bi bi-sliders me-2 text-secondary"></i> FILTROS DE BÚSQUEDA
+                    </h5>
+
+                    <form id="formulario-filtros">
+                        
+                        <!-- Input por texto interactivo en tiempo real -->
+                        <div class="mb-4">
+                            <label for="buscar" class="form-label fw-semibold small text-muted text-uppercase">Buscar por nombre</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-white border-end-0 text-muted"><i class="bi bi-search"></i></span>
+                                <input type="text" 
+                                       name="q" 
+                                       id="buscar" 
+                                       class="form-control border-start-0 ps-0" 
+                                       placeholder="Escribe un nombre..."
+                                       hx-get="{% url 'buscador_agentes' %}" 
+                                       hx-trigger="keyup delay:300ms changed" 
+                                       hx-target="#contenedor-resultados"
+                                       hx-include="#formulario-filtros"
+                                       hx-indicator="#spinner-carga">
+                            </div>
+                            <div id="spinner-carga" class="htmx-indicator mt-2 text-primary small">
+                                <span class="spinner-border spinner-border-sm" role="status"></span> Buscando...
+                            </div>
+                        </div>
+
+                        <!-- Radios: Especialidad -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Especialidad</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="especialidad" id="esp-todas" value="" checked
+                                       hx-get="{% url 'buscador_agentes' %}" hx-target="#contenedor-resultados" hx-include="#formulario-filtros" hx-indicator="#spinner-carga">
+                                <label class="form-check-label" for="esp-todas">Todas</label>
+                            </div>
+                            {% for esp in especialidades %}
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="radio" name="especialidad" id="esp-{{ forloop.counter }}" value="{{ esp }}"
+                                       hx-get="{% url 'buscador_agentes' %}" hx-target="#contenedor-resultados" hx-include="#formulario-filtros" hx-indicator="#spinner-carga">
+                                <label class="form-check-label" for="esp-{{ forloop.counter }}">{{ esp }}</label>
+                            </div>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Selector de Ciudad -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Ciudad</label>
+                            <select name="ciudad" class="form-select"
+                                    hx-get="{% url 'buscador_agentes' %}" 
+                                    hx-target="#contenedor-resultados"
+                                    hx-include="#formulario-filtros"
+                                    hx-indicator="#spinner-carga">
+                                <option value="">Todas las ciudades</option>
+                                {% for c in ciudades %}
+                                    <option value="{{ c }}">{{ c }}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+
+                        <!-- Checkboxes de Estado -->
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold small text-muted text-uppercase">Estado</label>
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" name="activo_ahora" id="activo" value="true"
+                                       hx-get="{% url 'buscador_agentes' %}" hx-target="#contenedor-resultados" hx-include="#formulario-filtros" hx-indicator="#spinner-carga">
+                                <label class="form-check-label" for="activo">Activo ahora</label>
+                            </div>
+                            <div class="form-check mb-4">
+                                <input class="form-check-input" type="checkbox" name="fin_semana" id="fds" value="true"
+                                       hx-get="{% url 'buscador_agentes' %}" hx-target="#contenedor-resultados" hx-include="#formulario-filtros" hx-indicator="#spinner-carga">
+                                <label class="form-check-label" for="fds">Disponible fin de semana</label>
+                            </div>
+                        </div>
+
+                    </form> <!-- 🔴 Corregido: El formulario ahora cierra bien y no se traga el botón -->
+
+                    <!-- 🟢 Botón Limpiar: Fuera del form con hx-params="none" para evitar conflictos de caché AJAX -->
+                    <button type="button" 
+                            class="btn btn-primary w-100 fw-semibold py-2 d-flex align-items-center justify-content-center"
+                            hx-get="{% url 'buscador_agentes' %}"
+                            hx-params="none"
+                            hx-target="#contenedor-resultados"
+                            hx-indicator="#spinner-carga"
+                            onclick="document.getElementById('formulario-filtros').reset();">
+                        <i class="bi bi-eraser-fill me-2"></i> Limpiar Filtros
+                    </button>
+                </div>
+            </div>
+
+            <!-- 🚀 Resultados Principales -->
+            <div class="col-lg-8 col-md-7">
+                <div id="contenedor-resultados" class="card border-0 shadow-sm p-4 bg-white rounded-3">
+                    {% include 'agentes/partials/lista_resultados.html' %}
+                </div> <!-- 🔴 Corregido: Agregado el cierre del contenedor que faltaba al final de tu fragmento -->
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap 5 JS Bundle -->
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js">
+</script>
+</body>
+</html>

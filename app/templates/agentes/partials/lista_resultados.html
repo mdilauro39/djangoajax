@@ -1,0 +1,44 @@
+<!-- ⌛ Contenedor Esqueleto de Bootstrap (Se muestra solo durante llamadas AJAX de HTMX) -->
+<div class="placeholder-container">
+    <h5 class="fw-bold mb-4 text-muted skeleton-card text-transparent rounded" style="width: 180px;">Cargando...</h5>
+    <div class="row g-3">
+        {% for i in "1234" %}
+        <div class="col-xl-6 col-12">
+            <div class="card p-3 border-0 bg-light rounded-3 h-100 shadow-sm">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="avatar-container skeleton-card border-0"></div>
+                    <div class="w-100">
+                        <div class="skeleton-card rounded mb-2 text-transparent" style="width: 70%;">Nombre</div>
+                        <div class="skeleton-card rounded mb-2 text-transparent" style="width: 40%; font-size: 12px;">Rating</div>
+                        <div class="skeleton-card rounded text-transparent" style="width: 50%; font-size: 12px;">Ubicación</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- 🚀 Resultados Dinámicos Reales -->
+<div class="resultados-dinamicos">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h5 class="fw-bold text-dark m-0">
+            🚀 Agentes Encontrados 
+            <span class="badge bg-secondary-subtle text-secondary rounded-pill fs-6 ms-2 fw-normal">{{ agentes.paginator.count }}</span>
+        </h5>
+    </div>
+
+    <div class="row g-3">
+        {% for agente in agentes %}
+            {% include 'agentes/partials/tarjeta_agente.html' %}
+        {% empty %}
+            <div class="col-12 py-5 text-center text-muted">
+                <i class="bi bi-search-heart fs-1 d-block mb-3 text-secondary-heading"></i>
+                <h6 class="fw-bold text-dark">Sin coincidencias exactas</h6>
+                <p class="small text-muted">Prueba removiendo filtros o modificando el criterio de nombre.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    {% include 'agentes/partials/paginador.html' %}
+</div>

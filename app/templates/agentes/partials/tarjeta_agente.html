@@ -1,0 +1,43 @@
+<div class="col-xl-6 col-12">
+    <div class="card card-agent p-3 bg-white rounded-3 h-100 shadow-xs">
+        <div class="d-flex align-items-center gap-3">
+            
+            <!-- Avatar Estilizado -->
+            <div class="avatar-container border border-2 border-white shadow-sm bg-gradient text-primary" style="background-color: #eff6ff;">
+                <i class="bi bi-person-fill fs-2"></i>
+            </div>
+            
+            <!-- Detalles de Información -->
+            <div class="w-100">
+                <div class="d-flex justify-content-between align-items-start">
+                    <h6 class="fw-bold mb-1 text-dark text-truncate" style="max-width: 160px;">{{ agente.nombre }}</h6>
+                    {% if agente.activo_ahora %}
+                        <span class="badge bg-success-subtle text-success border border-success-subtle rounded-pill small px-2">Disponible</span>
+                    {% else %}
+                        <span class="badge bg-light text-muted border rounded-pill small px-2">Offline</span>
+                    {% endif %}
+                </div>
+                
+                <!-- Calificación -->
+                <div class="d-flex align-items-center mb-2" style="font-size: 13px;">
+                    <span class="text-warning me-1">
+                        <i class="bi bi-star-fill"></i>
+                    </span>
+                    <span class="fw-bold text-dark">{{ agente.rating }}</span>
+                    <span class="text-muted ms-1">/ 5.0</span>
+                </div>
+                
+                <!-- Etiquetas de Información Base de Bootstrap -->
+                <div class="d-flex flex-column gap-1" style="font-size: 13px;">
+                    <div class="text-secondary text-truncate">
+                        <i class="bi bi-briefcase me-1.5 text-muted"></i> {{ agente.especialidad }}
+                    </div>
+                    <div class="text-secondary">
+                        <i class="bi bi-geo-alt me-1.5 text-danger opacity-75"></i> {{ agente.ciudad }}
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
