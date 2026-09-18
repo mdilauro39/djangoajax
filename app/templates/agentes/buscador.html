@@ -129,6 +129,21 @@
         </div>
 
     </div>
+        <!-- 🟢 ESQUELETO DEL MODAL DE BOOTSTRAP -->
+    <div class="modal fade" id="agenteModal" tabindex="-1" aria-labelledby="agenteModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <!-- HTMX va a reemplazar el contenido de este div con el partial 'modal_detalle.html' -->
+            <div class="modal-content shadow-lg border-0 rounded-3" id="modal-contenido-dinamico">
+                
+                <!-- Contenido temporal de carga por si el servidor tarda -->
+                <div class="modal-body text-center py-5">
+                    <div class="spinner-border text-primary text-purple" role="status" style="color: #6b21a8;"></div>
+                    <p class="text-muted mt-2 mb-0">Cargando expediente...</p>
+                </div>
+
+            </div>
+        </div>
+    </div>
     <!-- Bootstrap 5 JS Bundle -->
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.8/js/bootstrap.min.js">

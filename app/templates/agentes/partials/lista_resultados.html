@@ -27,10 +27,16 @@
                     {% endif %}
                 </td>
                 <td class="text-center">
-                    <!-- Botón de acción con el ícono morado estilo el de la imagen -->
-                    <a href="#" class="btn btn-sm btn-link text-decoration-none" style="color: #6b21a8;">
-                        <i class="bi bi-eye-fill fs-5"></i>
-                    </a>
+                       <!-- 🟢 Botón del ojito conectado al modal asíncrono -->
+    <button type="button" 
+            class="btn btn-link text-decoration-none p-0" 
+            style="color: #6b21a8;"
+            hx-get="{% url 'detalle_agente_modal' agente.id %}" 
+            hx-target="#modal-contenido-dinamico"
+            data-bs-toggle="modal" 
+            data-bs-target="#agenteModal">
+        <i class="bi bi-eye-fill fs-5"></i>
+    </button>
                 </td>
             </tr>
             {% empty %}
