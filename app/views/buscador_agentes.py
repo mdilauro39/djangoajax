@@ -1,10 +1,6 @@
 from django.shortcuts import render
-
-# Create your views here.
-from django.shortcuts import render
 from django.core.paginator import Paginator
-from .models import Agente
-from django.shortcuts import get_object_or_404
+from ..models import Agente
 
 def buscador_agentes(request):
     # 1. Consulta base con los agentes ordenados por nombre
@@ -48,9 +44,3 @@ def buscador_agentes(request):
 
     # Primera carga del navegador: Envía la interfaz completa con la barra lateral de filtros
     return render(request, 'agentes/buscador.html', context)
-
-
-# Nueva vista para el modal
-def detalle_agente_modal(request, agente_id):
-    agente = get_object_or_404(Agente, id=agente_id)
-    return render(request, 'agentes/partials/modal_detalle.html', {'agente': agente})
