@@ -1,75 +1,40 @@
 {% if agentes.has_other_pages %}
-<nav aria-label="Navegación de resultados" class="mt-5 text-center">
-    <ul class="pagination pagination-md justify-content-center shadow-sm d-inline-flex border rounded-3 overflow-hidden bg-white p-0">
+<nav aria-label="Navegación de resultados" class="mt-4">
+    <ul class="pagination pagination-sm justify-content-center m-0">
         
-        <!-- ⬅️ Botón Anterior -->
         {% if agentes.has_previous %}
             <li class="page-item">
-                <a class="page-link border-0 py-2.5 px-3 text-dark d-flex align-items-center gap-1 cursor-pointer" 
+                <a class="page-link text-dark cursor-pointer" 
                    hx-get="?page={{ agentes.previous_page_number }}" 
                    hx-include="#formulario-filtros" 
                    hx-target="#contenedor-resultados">
-                    <i class="bi bi-chevron-left" style="font-size: 12px;"></i>
-                    <span class="d-none d-sm-inline small fw-semibold">Anterior</span>
+                    &laquo; Anterior
                 </a>
-            </li>
-        {% else %}
-            <li class="page-item disabled">
-                <span class="page-link border-0 py-2.5 px-3 text-muted d-flex align-items-center gap-1">
-                    <i class="bi bi-chevron-left" style="font-size: 12px;"></i>
-                    <span class="d-none d-sm-inline small">Anterior</span>
-                </span>
             </li>
         {% endif %}
 
-        <!-- 🔢 Números de Página Centrales -->
         {% for num in agentes.paginator.page_range %}
-            {% if agentes.number == num %}
-                <li class="page-item active" aria-current="page">
-                    <span class="page-link border-0 py-2.5 px-3.5 fw-bold bg-primary text-white">
-                        {{ num }}
-                    </span>
-                </li>
-            {% elif num > agentes.number|add:'-3' and num < agentes.number|add:'3' %}
-                <li class="page-item">
-                    <a class="page-link border-0 py-2.5 px-3.5 text-secondary fw-semibold cursor-pointer" 
-                       hx-get="?page={{ num }}" 
-                       hx-include="#formulario-filtros" 
-                       hx-target="#contenedor-resultados">
-                        {{ num }}
-                    </a>
-                </li>
-            {% endif %}
+            <li class="page-item {% if agentes.number == num %}active{% endif %}">
+                <a class="page-link {% if agentes.number == num %}bg-dark border-dark text-white{% else %}text-dark{% endif %} cursor-pointer" 
+                   hx-get="?page={{ num }}" 
+                   hx-include="#formulario-filtros" 
+                   hx-target="#contenedor-resultados">
+                    {{ num }}
+                </a>
+            </li>
         {% endfor %}
 
-        <!-- ➡️ Botón Siguiente -->
         {% if agentes.has_next %}
             <li class="page-item">
-                <a class="page-link border-0 py-2.5 px-3 text-dark d-flex align-items-center gap-1 cursor-pointer" 
+                <a class="page-link text-dark cursor-pointer" 
                    hx-get="?page={{ agentes.next_page_number }}" 
                    hx-include="#formulario-filtros" 
                    hx-target="#contenedor-resultados">
-                    <span class="d-none d-sm-inline small fw-semibold">Siguiente</span>
-                    <i class="bi bi-chevron-right" style="font-size: 12px;"></i>
+                    Siguiente &raquo;
                 </a>
-            </li>
-        {% else %}
-            <li class="page-item disabled">
-                <span class="page-link border-0 py-2.5 px-3 text-muted d-flex align-items-center gap-1">
-                    <span class="d-none d-sm-inline small">Siguiente</span>
-                    <i class="bi bi-chevron-right" style="font-size: 12px;"></i>
-                </span>
             </li>
         {% endif %}
         
     </ul>
 </nav>
 {% endif %}
-
-<style>
-    .pagination .page-link:hover:not(.disabled) {
-        background-color: #f1f5f9 !important;
-        color: #0f172a !important;
-    }
-    .cursor-pointer { cursor: pointer; }
-</style>

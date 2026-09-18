@@ -1,44 +1,49 @@
-<!-- ⌛ Contenedor Esqueleto de Bootstrap (Se muestra solo durante llamadas AJAX de HTMX) -->
-<div class="placeholder-container">
-    <h5 class="fw-bold mb-4 text-muted skeleton-card text-transparent rounded" style="width: 180px;">Cargando...</h5>
-    <div class="row g-3">
-        {% for i in "1234" %}
-        <div class="col-xl-6 col-12">
-            <div class="card p-3 border-0 bg-light rounded-3 h-100 shadow-sm">
-                <div class="d-flex align-items-center gap-3">
-                    <div class="avatar-container skeleton-card border-0"></div>
-                    <div class="w-100">
-                        <div class="skeleton-card rounded mb-2 text-transparent" style="width: 70%;">Nombre</div>
-                        <div class="skeleton-card rounded mb-2 text-transparent" style="width: 40%; font-size: 12px;">Rating</div>
-                        <div class="skeleton-card rounded text-transparent" style="width: 50%; font-size: 12px;">Ubicación</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
+<div class="table-responsive">
+    <table class="table table-bordered table-hover m-0">
+        <thead>
+            <tr class="table-custom-header text-center">
+                <th scope="col">Nombre y Apellido</th>
+                <th scope="col">Especialidad</th>
+                <th scope="col">📍 Ciudad</th>
+                <th scope="col">⭐ Puntuación</th>
+                <th scope="col">Estado</th>
+                <th scope="col">Acción</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for agente in agentes %}
+            <tr>
+                <td class="fw-bold px-3 text-dark">{{ agente.nombre }}</td>
+                <td class="text-secondary">{{ agente.especialidad }}</td>
+                <td>{{ agente.ciudad }}</td>
+                <td class="text-center fw-semibold text-warning">
+                    <i class="bi bi-star-fill me-1"></i>{{ agente.rating }}
+                </td>
+                <td class="text-center">
+                    {% if agente.activo_ahora %}
+                        <span class="badge bg-success rounded-pill px-3">Activo</span>
+                    {% else %}
+                        <span class="badge bg-danger rounded-pill px-3">Offline</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <!-- Botón de acción con el ícono morado estilo el de la imagen -->
+                    <a href="#" class="btn btn-sm btn-link text-decoration-none" style="color: #6b21a8;">
+                        <i class="bi bi-eye-fill fs-5"></i>
+                    </a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-center py-5 text-muted">
+                    <i class="bi bi-folder-x fs-2 d-block mb-2"></i>
+                    No se encontraron agentes con los criterios ingresados.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 
-<!-- 🚀 Resultados Dinámicos Reales -->
-<div class="resultados-dinamicos">
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <h5 class="fw-bold text-dark m-0">
-            🚀 Agentes Encontrados 
-            <span class="badge bg-secondary-subtle text-secondary rounded-pill fs-6 ms-2 fw-normal">{{ agentes.paginator.count }}</span>
-        </h5>
-    </div>
-
-    <div class="row g-3">
-        {% for agente in agentes %}
-            {% include 'agentes/partials/tarjeta_agente.html' %}
-        {% empty %}
-            <div class="col-12 py-5 text-center text-muted">
-                <i class="bi bi-search-heart fs-1 d-block mb-3 text-secondary-heading"></i>
-                <h6 class="fw-bold text-dark">Sin coincidencias exactas</h6>
-                <p class="small text-muted">Prueba removiendo filtros o modificando el criterio de nombre.</p>
-            </div>
-        {% endfor %}
-    </div>
-
-    {% include 'agentes/partials/paginador.html' %}
-</div>
+<!-- Incluimos el paginador debajo de la tabla -->
+{% include 'agentes/partials/paginador.html' %}

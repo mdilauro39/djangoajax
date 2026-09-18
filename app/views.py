@@ -10,11 +10,11 @@ def buscador_agentes(request):
     agentes_queryset = Agente.objects.all().order_by('nombre')
     
     # 2. Capturar parámetros de los filtros desde la URL (Request GET)
-    query = request.GET.get('q', '')
-    especialidad = request.GET.get('especialidad', '')
-    ciudad = request.GET.get('ciudad', '')
-    activo_ahora = request.GET.get('activo_ahora', '')
-    fin_semana = request.GET.get('fin_semana', '')
+    query = request.GET.get('q', '').strip()
+    especialidad = request.GET.get('especialidad', '').strip()
+    ciudad = request.GET.get('ciudad', '').strip()
+    activo_ahora = request.GET.get('activo_ahora', '').strip()
+    fin_semana = request.GET.get('fin_semana', '').strip()
 
     # 3. Aplicación dinámica de filtros del formulario
     if query:
